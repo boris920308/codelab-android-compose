@@ -1,5 +1,7 @@
 package com.example.reply.ui.theme
+
 import android.app.Activity
+import android.hardware.lights.Light
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -259,10 +261,14 @@ fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
-    val colors = if (!useDarkTheme) {
-        lightScheme
-    } else {
-        darkScheme
+    val context = LocalContext.current
+    val colors = when {
+        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) -> {
+            if (useDarkTheme) dynamicDarkColorScheme(context)
+            else dynamicLightColorScheme(context)
+        }
+        useDarkTheme -> darkScheme
+        else -> lightScheme
     }
 
     MaterialTheme(
